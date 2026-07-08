@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
-
+from app.database import get_db
 from app.database import SessionLocal
 from app.models.models import User
 from app.auth_utils import verify_password, create_token
@@ -25,30 +25,42 @@ def login(
     db: Session = Depends(get_db),
 ):
     try:
-        # OAuth2PasswordRequestForm uses "username" field as email
-        email = (form_data.username or "").strip().lower()
-        password = form_data.password or ""
-
+        email = form_data.username.strip().lower()
+        password = form_data.password
         user = db.query(User).filter(User.email == email).first()
-
         if not user:
-            logger.warning("Login failed: user not found for email=%s", email)
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid email or password"
+            )
         if not verify_password(password, user.password):
-            logger.warning("Login failed: password mismatch for email=%s", email)
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-
-        token = create_token({"sub": user.email})
-
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid email or password"
+            )
+        access_token = create_token({"sub": user.email})
         return {
-            "access_token": token,
+            "access_token": access_token,
             "token_type": "bearer"
         }
-
     except HTTPException:
         raise
-
     except Exception as e:
-        logger.exception("Login failed with server error")
-        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Login failed: {str(e)}"
+        )
+
+
+def get_current_user(
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="User not found"
+        )
+
+    return user

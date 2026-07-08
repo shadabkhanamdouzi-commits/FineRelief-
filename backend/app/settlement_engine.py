@@ -1,31 +1,93 @@
-def calculate_settlement(overdue_months, loan_type):
-    if overdue_months >= 12:
-        percentage = 60
-        priority = "High"
-    elif overdue_months >= 6:
-        percentage = 45
-        priority = "Medium"
+from app.models.models import User
+from app.models.models import Loan
+
+
+def calculate_settlement_probability(user: User, loans: list[Loan]):
+
+    total_outstanding = sum(
+        loan.outstanding_amount for loan in loans
+    )
+
+    total_emi = sum(
+        loan.emi for loan in loans
+    )
+
+    # Calculate EMI-to-Income Ratio
+    if user.monthly_income > 0:
+        emi_ratio = (
+            total_emi / user.monthly_income
+        ) * 100
     else:
-        percentage = 30
-        priority = "Low"
+        emi_ratio = 0
 
-    if loan_type.lower() == "personal":
-        percentage += 5
+    # Calculate Debt-to-Income Ratio
+    if user.monthly_income > 0:
+        debt_to_income = (
+            total_outstanding / user.monthly_income
+        ) * 100
+    else:
+        debt_to_income = 0
 
-    return {
-        "settlement_percentage": percentage,
-        "priority": priority
-    }
-def generate_negotiation_letter(lender_name, settlement_percentage):
-    return f"""
-Dear {lender_name},
+    settlement_results = []
 
-I am currently facing financial difficulties and request your consideration for a settlement.
+    for loan in loans:
 
-I kindly request a settlement of approximately {settlement_percentage}% of the outstanding loan amount.
+        # Base settlement percentage
+        settlement = 50.0
+        risk_score = 0
 
-Thank you for your understanding.
+        # Overdue months
+        if loan.overdue_months > 0:
+            settlement += 5
+            risk_score += 20
 
-Sincerely,
-Customer
-"""
+        # EMI Ratio
+        if emi_ratio > 50:
+            settlement += 5
+            risk_score += 15
+
+        # High Interest Rate
+        if loan.interest_rate > 12:
+            settlement += 5
+            risk_score += 10
+
+        # Debt-to-Income Ratio
+        if debt_to_income > 80:
+            settlement += 5
+            risk_score += 15
+
+        # Settlement Limits
+        settlement = max(
+            40,
+            min(75, settlement)
+        )
+
+        # Risk Category
+        if risk_score >= 40:
+            risk_category = "High"
+
+        elif risk_score >= 20:
+            risk_category = "Medium"
+
+        else:
+            risk_category = "Low"
+
+        settlement_results.append(
+            {
+                "loan_id": loan.id,
+                "lender_name": loan.lender_name,
+                "outstanding_amount": loan.outstanding_amount,
+                "interest_rate": loan.interest_rate,
+                "emi": loan.emi,
+                "emi_ratio": round(emi_ratio, 2),
+                "debt_to_income_ratio": round(
+                    debt_to_income,
+                    2
+                ),
+                "suggested_settlement_percentage": settlement,
+                "risk_score": risk_score,
+                "risk_category": risk_category
+            }
+        )
+
+    return settlement_results

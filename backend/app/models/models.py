@@ -7,19 +7,15 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-
     # Authentication
     email = Column(String(255), unique=True, index=True, nullable=False)
     password = Column(String(255), nullable=False)
-
     # Profile
     name = Column(String(255), nullable=True)
-
     # Financial Profile
     monthly_income = Column(Float, default=0.0)
     monthly_expenses = Column(Float, default=0.0)
     lump_sum_available = Column(Float, default=0.0)
-
     loans = relationship("Loan", back_populates="user")
 
 

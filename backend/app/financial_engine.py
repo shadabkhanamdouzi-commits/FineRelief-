@@ -73,13 +73,11 @@ def calculate_loan_priority(loans, emi_ratio=0):
         "Medium": 1,
         "Low": 2
     }
-
     priority_list.sort(
         key=lambda x: priority_order[x["priority"]]
     )
 
     return priority_list
-
 
 def simulate_debt_timeline(user, loans, extra_payment=0):
     loan_data = [
@@ -91,7 +89,6 @@ def simulate_debt_timeline(user, loans, extra_payment=0):
         }
         for loan in loans
     ]
-
     months = 0
     max_months = 240
     timeline = []
@@ -111,11 +108,9 @@ def simulate_debt_timeline(user, loans, extra_payment=0):
         for loan in loan_data:
             if loan["balance"] <= 0:
                 continue
-
             monthly_interest = (
                 (loan["interest_rate"] / 100) / 12
             )
-
             loan["balance"] += (
                 loan["balance"] * monthly_interest
             )
