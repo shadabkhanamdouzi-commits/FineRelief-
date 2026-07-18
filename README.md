@@ -180,12 +180,12 @@ pytest -v
 
 Project: AI-Powered Debt Relief & Financial Recovery Platform
 
-- Team Leader: Douzi Shadab Khanam
-Github Repository : https://github.com/shadabkhanamdouzi-commits/FineRelief-.git
-- Member 1: Dandugula Tharun
-- Member 2: Dheeraj Kumar kempuraju
-- Member 3: k.lakshmi Priya
-- Member 4: Nagella bhavya
+- Team Leader: Madhu Thaddi
+Github Repository : https://github.com/Mithun9661/FineRelief
+- Member 1: Mithun Kumar
+- Member 2: Mani Prabha Bhuvanasi
+- Member 3: Durga Prasad Gandiboina
+- Member 4: Lohitha Gude
 
 ---
 
