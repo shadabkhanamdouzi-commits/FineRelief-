@@ -111,52 +111,96 @@ Git & GitHub| Version Control
 
 🚀 Installation
 
+### Option 1: Docker (Recommended)
+
+**Prerequisites:**
+- Docker & Docker Compose installed
+
+**Quick Start:**
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd FineRelief-
+
+# Build and start services
+docker-compose up --build
+```
+
+**Access the application:**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+
+**Or use the startup script:**
+
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+### Option 2: Local Development
+
 1. Clone Repository
 
+```bash
 git clone <repository-url>
+cd FineRelief-
+```
 
 2. Create Virtual Environment
 
+```bash
 python -m venv .venv
+```
 
 Activate Environment
 
-Windows
-
+**Windows:**
+```bash
 .venv\Scripts\activate
+```
 
-Linux / macOS
-
+**Linux / macOS:**
+```bash
 source .venv/bin/activate
+```
 
 3. Install Dependencies
 
+```bash
+# Backend
+cd backend
 pip install -r requirements.txt
 
----
-
-▶️ Run Backend
-
-uvicorn app.main:app --reload
-
-Backend URL
-
-http://127.0.0.1:8001
-
-Swagger Documentation
-
-http://127.0.0.1:8001/docs
-
----
-
-▶️ Run Frontend
-
+# Frontend
+cd ../frontend
 npm install
+```
+
+---
+
+▶️ Run Backend (Local)
+
+```bash
+cd backend
+uvicorn app.main:app --reload
+```
+
+Backend URL: http://127.0.0.1:8000
+
+Swagger Documentation: http://127.0.0.1:8000/docs
+
+---
+
+▶️ Run Frontend (Local)
+
+```bash
+cd frontend
 npm run dev
+```
 
-Frontend URL
-
-http://localhost:5173
+Frontend URL: http://localhost:5173
 
 ---
 
